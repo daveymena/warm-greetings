@@ -29,6 +29,19 @@ export const loansApi = {
     }),
 };
 
+export const receiptsApi = {
+    generatePaymentReceipt: (paymentId: string) => apiFetch(`/receipts/payment/${paymentId}`, {
+        method: 'POST',
+    }),
+    generateBauch: (paymentId: string) => apiFetch(`/receipts/bauch/${paymentId}`, {
+        method: 'POST',
+    }),
+    generatePazYSalvo: (loanId: string) => apiFetch(`/receipts/paz-y-salvo/${loanId}`, {
+        method: 'POST',
+    }),
+    getPaymentHistory: (loanId: string) => apiFetch(`/receipts/payment-history/${loanId}`),
+};
+
 export const authApi = {
     login: (credentials: any) => apiFetch('/auth/login', {
         method: 'POST',

@@ -9,6 +9,7 @@ import userRoutes from './routes/users';
 import profileRoutes from './routes/profile';
 import automationRoutes from './routes/automation';
 import clientRoutes from './routes/clients';
+import receiptRoutes from './routes/receipts';
 import { WhatsAppService } from './services/whatsappService';
 import { ReminderJob } from './services/reminderJob';
 
@@ -44,6 +45,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/automation', automationRoutes);
 app.use('/api/clients', clientRoutes);
+app.use('/api/receipts', receiptRoutes);
 
 app.get('/health', async (req, res) => {
   try {

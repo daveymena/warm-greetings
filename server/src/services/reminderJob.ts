@@ -69,10 +69,10 @@ export class ReminderJob {
                     }
                 },
                 include: {
-                    loan: {
+                    Loan: {
                         include: {
-                            client: true,
-                            user: true
+                            Client: true,
+                            User: true
                         }
                     }
                 }
@@ -81,25 +81,25 @@ export class ReminderJob {
             console.log(`📢 Found ${duePayments.length} upcoming payments for tomorrow.`);
 
             for (const payment of duePayments) {
-                const { loan } = payment;
-                const { client, user } = loan;
+                const { Loan } = payment;
+                const { Client, User } = Loan;
 
                 const message = await AIService.generateReminderText(
-                    client.name,
+                    Client.name,
                     payment.amount,
                     tomorrow.toLocaleDateString(),
-                    user?.name || 'Rapi-Credi',
-                    (loan as any).frequency || 'MENSUAL'
+                    User?.name || 'Rapi-Credi',
+                    (Loan as any).frequency || 'MENSUAL'
                 );
 
                 // Send WhatsApp to Client
-                if (client.phone) {
-                    await WhatsAppService.sendMessage(client.phone, message);
+                if (Client.phone) {
+                    await WhatsAppService.sendMessage(Client.phone, message);
                 }
 
                 // Send Email to Client
-                if (client.email) {
-                    await EmailService.sendEmail(client.email, 'Recordatorio de Pago Próximo - Rapi-Credi', message);
+                if (Client.email) {
+                    await EmailService.sendEmail(Client.email, 'Recordatorio de Pago Próximo - Rapi-Credi', message);
                 }
             }
 
@@ -109,10 +109,10 @@ export class ReminderJob {
                     status: 'OVERDUE'
                 },
                 include: {
-                    loan: {
+                    Loan: {
                         include: {
-                            client: true,
-                            user: true
+                            Client: true,
+                            User: true
                         }
                     }
                 }
@@ -121,11 +121,11 @@ export class ReminderJob {
             // Group by lender (user)
             const lenderMora: Record<string, any[]> = {};
             for (const payment of overduePayments) {
-                const { loan } = payment;
-                if (loan.userId) {
-                    if (!lenderMora[loan.userId]) lenderMora[loan.userId] = [];
-                    lenderMora[loan.userId].push({
-                        client: loan.client.name,
+                const { Loan } = payment;
+                if (Loan.userId) {
+                    if (!lenderMora[Loan.userId]) lenderMora[Loan.userId] = [];
+                    lenderMora[Loan.userId].push({
+                        client: Loan.Client.name,
                         amount: payment.amount,
                         daysOverdue: Math.floor((today.getTime() - payment.dueDate.getTime()) / (1000 * 60 * 60 * 24))
                     });

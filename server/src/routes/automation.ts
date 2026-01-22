@@ -82,7 +82,7 @@ router.post('/ai-reminder', authenticateToken, async (req: any, res) => {
         const client = await prisma.client.findUnique({ where: { id: clientId } });
         const loan = await prisma.loan.findUnique({
             where: { id: loanId },
-            include: { user: true }
+            include: { User: true }
         });
 
         if (!client || !loan) {
@@ -93,7 +93,7 @@ router.post('/ai-reminder', authenticateToken, async (req: any, res) => {
             client.name,
             loan.amount,
             new Date().toLocaleDateString(),
-            loan.user?.name || 'Rapi-Credi'
+            loan.User?.name || 'Rapi-Credi'
         );
 
         res.json({ success: true, aiMessage });

@@ -51,4 +51,33 @@ router.post('/', authenticateToken, async (req: any, res) => {
     }
 });
 
+// Get total balance for a specific client
+router.get('/balance/:clientId', authenticateToken, async (req: any, res) => {
+    try {
+        const { clientId } = req.params;
+
+        const loans = await prisma.loan.findMany({
+            where: {
+                clientId,
+                userId: req.user.userId
+            },
+            include: {
+                Payment: true
+            }
+        });
+
+        let totalBalance = 0;
+        for (const loan of loans) {
+            const totalPaid = loan.Payment.reduce((sum: number, payment: any) => sum + payment.amount, 0);
+            const balance = loan.amount - totalPaid;
+            totalBalance += balance;
+        }
+
+        res.json({ totalBalance });
+    } catch (error) {
+        console.error('Error calculating client balance:', error);
+        res.status(500).json({ message: 'Error al calcular el balance del cliente', error });
+    }
+});
+
 export default router;

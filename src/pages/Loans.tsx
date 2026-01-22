@@ -6,6 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { PaymentHistoryModal } from '@/components/receipts/PaymentHistoryModal';
+import { PazYSalvoButton } from '@/components/receipts/PazYSalvoButton';
 import {
   Plus,
   Wallet,
@@ -16,7 +18,9 @@ import {
   TrendingUp,
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  FileText,
+  History
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
@@ -47,6 +51,8 @@ interface LoanFormData {
 const Loans = () => {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedLoanId, setSelectedLoanId] = useState<string>('');
+  const [showPaymentHistory, setShowPaymentHistory] = useState(false);
 
   const { data: loans = [], isLoading, refetch } = useQuery({
     queryKey: ['loans'],
@@ -176,6 +182,33 @@ const Loans = () => {
             <User className="h-4 w-4" />
             <span className="truncate">Cliente: {loan.client?.name || loan.Client?.name || 'N/A'}</span>
           </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="pt-3 border-t flex gap-2 flex-wrap">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setSelectedLoanId(loan.id);
+              setShowPaymentHistory(true);
+            }}
+            className="flex-1 min-w-0"
+          >
+            <History className="h-4 w-4 mr-1" />
+            Historial
+          </Button>
+          
+          {(loan.status === 'PAID' || loan.status === 'ACTIVE') && (
+            <PazYSalvoButton
+              loanId={loan.id}
+              clientName={loan.client?.name || loan.Client?.name || 'N/A'}
+              totalAmount={loan.totalAmount || 0}
+              totalPaid={loan.totalPaid || 0}
+              size="sm"
+              variant="outline"
+            />
+          )}
         </div>
       </CardContent>
     </Card>
@@ -326,6 +359,13 @@ const Loans = () => {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Payment History Modal */}
+      <PaymentHistoryModal
+        loanId={selectedLoanId}
+        open={showPaymentHistory}
+        onOpenChange={setShowPaymentHistory}
+      />
     </MainLayout>
   );
 };

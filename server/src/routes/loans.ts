@@ -10,8 +10,8 @@ router.get('/', authenticateToken, async (req: any, res) => {
         const loans = await prisma.loan.findMany({
             where: { userId: req.user.userId },
             include: {
-                payments: true,
-                client: true
+                Payment: true,
+                Client: true
             }
         });
         res.json(loans);
@@ -68,6 +68,34 @@ router.post('/', authenticateToken, async (req: any, res) => {
     } catch (error) {
         console.error('Error creating loan:', error);
         res.status(500).json({ message: 'Error al crear el préstamo', error });
+    }
+});
+
+// Get balance for a specific loan
+router.get('/balance/:loanId', authenticateToken, async (req: any, res) => {
+    try {
+        const { loanId } = req.params;
+
+        const loan = await prisma.loan.findUnique({
+            where: {
+                id: loanId,
+                userId: req.user.userId
+            },
+            include: {
+                Payment: true
+            }
+        });
+
+        if (!loan) {
+            return res.status(404).json({ message: 'Loan not found' });
+        }
+
+        const totalPaid = loan.Payment.reduce((sum: number, payment: any) => sum + payment.amount, 0);
+        const balance = loan.amount - totalPaid;
+
+        res.json({ balance });
+    } catch (error) {
+        res.status(500).json({ message: 'Error calculating balance', error });
     }
 });
 
