@@ -10,9 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Loader2, CheckCircle2, AlertCircle, QrCode } from 'lucide-react';
 import { toast } from 'sonner';
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { apiFetch } from '@/lib/api';
 
 export function WhatsAppSync({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: (open: boolean) => void }) {
     const [status, setStatus] = useState<'CONNECTED' | 'DISCONNECTED' | 'CONNECTING'>('DISCONNECTED');
@@ -21,13 +19,10 @@ export function WhatsAppSync({ isOpen, onOpenChange }: { isOpen: boolean; onOpen
 
     const fetchStatus = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/automation/wa-status`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setStatus(response.data.status);
+            const data = await apiFetch('/automation/wa-status');
+            setStatus(data.status);
 
-            if (response.data.status !== 'CONNECTED') {
+            if (data.status !== 'CONNECTED') {
                 fetchQrImage();
             } else {
                 setQrImage(null);
@@ -41,11 +36,8 @@ export function WhatsAppSync({ isOpen, onOpenChange }: { isOpen: boolean; onOpen
 
     const fetchQrImage = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/automation/wa-qr-image`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setQrImage(response.data.qrImage);
+            const data = await apiFetch('/automation/wa-qr-image');
+            setQrImage(data.qrImage);
         } catch (error) {
             setQrImage(null);
         }
@@ -61,14 +53,13 @@ export function WhatsAppSync({ isOpen, onOpenChange }: { isOpen: boolean; onOpen
 
     const handleTestMessage = async () => {
         try {
-            const token = localStorage.getItem('token');
             const phone = prompt('Ingresa el número al que enviar la prueba (con código de país, ej: 57300...):');
             if (!phone) return;
 
-            await axios.post(`${API_URL}/automation/test-wa`,
-                { phone, message: '¡Prueba de conexión exitosa desde Rapi-Credi! 🚀' },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await apiFetch('/automation/test-wa', {
+                method: 'POST',
+                body: JSON.stringify({ phone, message: '¡Prueba de conexión exitosa desde Rapi-Credi! 🚀' })
+            });
             toast.success('Mensaje de prueba enviado');
         } catch (error) {
             toast.error('Error al enviar mensaje');
