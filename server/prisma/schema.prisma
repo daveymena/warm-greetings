@@ -7,21 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  name      String
-  phone     String?
-  address   String?
-  role      String   @default("USER")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  loans     Loan[]
-}
-
 model Client {
-  id         String   @id @default(uuid())
+  id         String   @id
   name       String
   email      String?
   phone      String
@@ -32,57 +19,8 @@ model Client {
   income     Float?
   references Json?
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
-  loans      Loan[]
-}
-
-model Loan {
-  id             String      @id @default(uuid())
-  amount         Float
-  interestRate   Float
-  term           Int
-  paymentDay     Int
-  monthlyPayment Float
-  totalAmount    Float
-  purpose        String?
-  status         String      @default("PENDING")
-  approvedAt     DateTime?
-  startDate      DateTime?
-  endDate        DateTime?
-  userId         String?
-  clientId       String
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @default(now()) @updatedAt
-  guarantees     Guarantee[]
-  client         Client      @relation(fields: [clientId], references: [id])
-  user           User?       @relation(fields: [userId], references: [id])
-  payments       Payment[]
-}
-
-model Payment {
-  id          String   @id @default(uuid())
-  amount      Float
-  paymentDate DateTime @default(now())
-  dueDate     DateTime
-  status      String   @default("PAID")
-  paymentType String   @default("MONTHLY")
-  notes       String?
-  loanId      String
-  createdAt   DateTime @default(now())
-  loan        Loan     @relation(fields: [loanId], references: [id])
-}
-
-model Guarantee {
-  id               String   @id @default(uuid())
-  type             String
-  description      String
-  value            Float?
-  guarantorName    String?
-  guarantorPhone   String?
-  guarantorAddress String?
-  loanId           String
-  createdAt        DateTime @default(now())
-  loan             Loan     @relation(fields: [loanId], references: [id])
+  updatedAt  DateTime @default(now())
+  Loan       Loan[]
 }
 
 model CompanySettings {
@@ -107,5 +45,67 @@ model CompanySettings {
   paymentReminders    Boolean  @default(true)
   overdueAlerts       Boolean  @default(true)
   newLoanAlerts       Boolean  @default(true)
-  updatedAt           DateTime @default(now()) @updatedAt
+  updatedAt           DateTime @default(now())
+}
+
+model Guarantee {
+  id               String   @id
+  type             String
+  description      String
+  value            Float?
+  guarantorName    String?
+  guarantorPhone   String?
+  guarantorAddress String?
+  loanId           String
+  createdAt        DateTime @default(now())
+  Loan             Loan     @relation(fields: [loanId], references: [id])
+}
+
+model Loan {
+  id             String      @id
+  amount         Float
+  interestRate   Float
+  term           Int
+  paymentDay     Int
+  monthlyPayment Float
+  totalAmount    Float
+  purpose        String?
+  status         String      @default("PENDING")
+  approvedAt     DateTime?
+  startDate      DateTime?
+  endDate        DateTime?
+  userId         String?
+  clientId       String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @default(now())
+  Guarantee      Guarantee[]
+  Client         Client      @relation(fields: [clientId], references: [id])
+  User           User?       @relation(fields: [userId], references: [id])
+  Payment        Payment[]
+}
+
+model Payment {
+  id          String   @id
+  amount      Float
+  paymentDate DateTime @default(now())
+  dueDate     DateTime
+  status      String   @default("PAID")
+  paymentType String   @default("MONTHLY")
+  notes       String?
+  loanId      String
+  createdAt   DateTime @default(now())
+  Loan        Loan     @relation(fields: [loanId], references: [id])
+}
+
+model User {
+  id        String   @id
+  email     String   @unique
+  password  String
+  name      String
+  phone     String?
+  address   String?
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  Loan      Loan[]
 }
