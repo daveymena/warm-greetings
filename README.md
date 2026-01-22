@@ -1,73 +1,219 @@
-# Welcome to your Lovable project
+# RapiCrédito - Sistema de Gestión de Préstamos
 
-## Project info
+## 🚀 Descripción
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+RapiCrédito es una aplicación web completa para la gestión profesional de préstamos y microcréditos. Diseñada para empresas financieras que necesitan una solución robusta, segura y fácil de usar.
 
-## How can I edit this code?
+## ✨ Características Principales
 
-There are several ways of editing your application.
+### 🏠 Landing Page Profesional
+- Página de inicio atractiva y moderna
+- Información clara sobre servicios
+- Planes de financiamiento
+- Testimonios de clientes
+- Formulario de contacto
 
-**Use Lovable**
+### 👤 Sistema de Usuarios
+- Registro e inicio de sesión seguro
+- El primer usuario registrado se convierte automáticamente en administrador
+- Roles y permisos diferenciados
+- Autenticación JWT
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### 📊 Dashboard Inteligente
+- Métricas en tiempo real
+- Estadísticas de préstamos
+- Gráficos y reportes visuales
+- Accesos rápidos a funciones principales
 
-Changes made via Lovable will be committed automatically to this repo.
+### 💰 Gestión de Préstamos
+- Crear y gestionar préstamos
+- Estados: Pendiente, Aprobado, Rechazado, Pagado
+- Cálculo automático de intereses
+- Seguimiento de pagos
 
-**Use your preferred IDE**
+### 👥 Gestión de Clientes
+- Base de datos completa de clientes
+- Historial crediticio
+- Información de contacto
+- Estados de cuenta
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 💳 Control de Pagos
+- Registro de pagos
+- Recordatorios automáticos
+- Control de vencimientos
+- Reportes de cobranza
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### ⚙️ Configuración Avanzada
+- Personalización de la empresa
+- Configuración de tasas de interés
+- Límites de préstamos
+- Notificaciones personalizables
 
-Follow these steps:
+## 🛠️ Tecnologías Utilizadas
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Frontend
+- **React 18** con TypeScript
+- **Vite** para desarrollo rápido
+- **Tailwind CSS** para estilos
+- **shadcn/ui** para componentes
+- **React Router** para navegación
+- **React Query** para manejo de estado
+- **Sonner** para notificaciones
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Backend
+- **Node.js** con Express
+- **TypeScript** para tipado fuerte
+- **Prisma** como ORM
+- **PostgreSQL** como base de datos
+- **JWT** para autenticación
+- **bcryptjs** para encriptación
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Infraestructura
+- **Docker** para contenedores
+- **Nginx** como proxy reverso
+- **PostgreSQL** en Easypanel
+- Despliegue en **Easypanel**
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+## 🚀 Instalación y Configuración
+
+### Prerrequisitos
+- Node.js 18+
+- PostgreSQL
+- npm o yarn
+
+### Configuración Local
+
+1. **Clonar el repositorio**
+```bash
+git clone <tu-repositorio>
+cd rapi-credito
+```
+
+2. **Instalar dependencias del frontend**
+```bash
+npm install
+```
+
+3. **Instalar dependencias del backend**
+```bash
+cd server
+npm install
+```
+
+4. **Configurar variables de entorno**
+```bash
+# En server/.env
+PORT=5000
+JWT_SECRET=tu_jwt_secret_muy_seguro
+DATABASE_URL="postgresql://usuario:contraseña@host:puerto/base_de_datos"
+```
+
+5. **Inicializar la base de datos**
+```bash
+cd server
+node init-db.js
+```
+
+6. **Ejecutar en desarrollo**
+```bash
+# Terminal 1 - Backend
+cd server
+npm run dev
+
+# Terminal 2 - Frontend
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Despliegue en Producción
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Ver el archivo `DEPLOYMENT.md` para instrucciones detalladas de despliegue en Easypanel.
 
-**Use GitHub Codespaces**
+## 📱 Uso de la Aplicación
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Primer Uso
+1. Accede a la aplicación
+2. Regístrate como primer usuario (serás administrador automáticamente)
+3. Configura tu empresa en Configuración
+4. Comienza a crear préstamos y gestionar clientes
 
-## What technologies are used for this project?
+### Funciones Principales
+- **Dashboard**: Vista general de tu negocio
+- **Préstamos**: Crear y gestionar préstamos
+- **Clientes**: Administrar base de datos de clientes
+- **Cobros**: Control de pagos y vencimientos
+- **Configuración**: Personalizar la aplicación
 
-This project is built with:
+## 🔒 Seguridad
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Contraseñas encriptadas con bcrypt
+- Autenticación JWT con tokens seguros
+- Validación de datos en frontend y backend
+- Protección contra inyección SQL con Prisma
+- Headers de seguridad configurados
 
-## How can I deploy this project?
+## 📊 Características del Negocio
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+### Métricas Disponibles
+- Capital total prestado
+- Préstamos activos
+- Clientes registrados
+- Tasas de aprobación
+- Cartera vencida
 
-## Can I connect a custom domain to my Lovable project?
+### Reportes
+- Préstamos por estado
+- Clientes más activos
+- Ingresos por período
+- Análisis de riesgo
 
-Yes, you can!
+## 🌐 URLs de Acceso
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Desarrollo Local
+- **Frontend**: http://localhost:8083
+- **Backend API**: http://localhost:5000/api
+- **Health Check**: http://localhost:5000/health
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Producción
+- **Aplicación**: https://tu-dominio.easypanel.app
+- **API**: https://tu-api.easypanel.app
+
+## 🤝 Contribución
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 📞 Soporte
+
+Para soporte técnico o consultas:
+- Email: soporte@rapicredito.com
+- Documentación: Ver archivos en `/docs`
+- Issues: Crear un issue en GitHub
+
+## 🔄 Actualizaciones
+
+### Versión 1.0.0
+- ✅ Landing page profesional
+- ✅ Sistema de autenticación completo
+- ✅ Dashboard con métricas reales
+- ✅ Gestión completa de préstamos
+- ✅ Base de datos PostgreSQL
+- ✅ Despliegue en Easypanel
+- ✅ Configuración personalizable
+
+### Próximas Funciones
+- 📧 Notificaciones por email
+- 📱 Notificaciones SMS
+- 📊 Reportes avanzados
+- 🔄 Sincronización móvil
+- 🤖 Automatización de cobranza
+
+---
+
+**RapiCrédito** - Soluciones financieras profesionales para tu negocio 💼

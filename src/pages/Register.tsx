@@ -1,0 +1,184 @@
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { DollarSign, Loader2, Shield, CheckCircle } from 'lucide-react';
+import { authApi } from '@/lib/api';
+
+const Register = () => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const data = await authApi.register({ name, email, password });
+            
+            login(data.token, data.user);
+            toast.success(data.message || `¡Bienvenido a RapiCrédito, ${data.user.name}!`);
+            
+            if (data.user.role === 'ADMIN') {
+                toast.success('¡Felicidades! Eres el administrador principal de RapiCrédito');
+            }
+            
+            navigate('/dashboard');
+        } catch (error: any) {
+            toast.error(error.message || 'Error al registrarse');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="flex min-h-screen">
+            {/* Left Side - Form */}
+            <div className="flex flex-1 items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4">
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-3xl" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-3xl" />
+                </div>
+
+                <Card className="w-full max-w-md z-10 border-white/40 shadow-2xl bg-white/80 backdrop-blur-sm">
+                    <CardHeader className="space-y-1 text-center">
+                        <div className="flex justify-center mb-4">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 shadow-lg shadow-blue-600/20">
+                                <DollarSign className="h-6 w-6 text-white" />
+                            </div>
+                        </div>
+                        <CardTitle className="text-3xl font-bold tracking-tight text-gray-900">
+                            Únete a RapiCrédito
+                        </CardTitle>
+                        <CardDescription className="text-lg text-gray-600">
+                            Crea tu cuenta y comienza a gestionar préstamos
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="name" className="text-gray-700">Nombre Completo</Label>
+                                <Input
+                                    id="name"
+                                    placeholder="Ingresa tu nombre completo"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                    className="bg-white/70 border-gray-200 focus:bg-white focus:border-blue-500"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-gray-700">Correo Electrónico</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="tu@email.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="bg-white/70 border-gray-200 focus:bg-white focus:border-blue-500"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="password" className="text-gray-700">Contraseña</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="Mínimo 6 caracteres"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    minLength={6}
+                                    className="bg-white/70 border-gray-200 focus:bg-white focus:border-blue-500"
+                                />
+                            </div>
+                            <Button 
+                                type="submit" 
+                                className="w-full h-11 text-lg font-semibold bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20" 
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                        Creando cuenta...
+                                    </>
+                                ) : (
+                                    'Crear Cuenta'
+                                )}
+                            </Button>
+                        </form>
+                        <div className="mt-6 text-center text-sm">
+                            <p className="text-gray-600">
+                                ¿Ya tienes una cuenta?{' '}
+                                <Link to="/login" className="font-semibold text-blue-600 hover:underline">
+                                    Inicia Sesión
+                                </Link>
+                            </p>
+                        </div>
+                        <div className="mt-4 text-center">
+                            <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
+                                ← Volver al inicio
+                            </Link>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Right Side - Benefits */}
+            <div className="hidden lg:flex flex-1 bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-12 items-center justify-center">
+                <div className="max-w-md space-y-8">
+                    <div>
+                        <h2 className="text-4xl font-bold mb-4">
+                            Gestiona préstamos como un profesional
+                        </h2>
+                        <p className="text-xl text-blue-100">
+                            RapiCrédito te ayuda a administrar tu negocio de préstamos de manera eficiente y segura.
+                        </p>
+                    </div>
+                    
+                    <div className="space-y-6">
+                        <div className="flex items-start space-x-4">
+                            <div className="flex-shrink-0">
+                                <CheckCircle className="h-6 w-6 text-green-400" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold">Control Total</h3>
+                                <p className="text-blue-100">Gestiona clientes, préstamos y pagos desde un solo lugar</p>
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-start space-x-4">
+                            <div className="flex-shrink-0">
+                                <Shield className="h-6 w-6 text-green-400" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold">Seguridad Garantizada</h3>
+                                <p className="text-blue-100">Tus datos están protegidos con encriptación de nivel bancario</p>
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-start space-x-4">
+                            <div className="flex-shrink-0">
+                                <DollarSign className="h-6 w-6 text-green-400" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold">Reportes Detallados</h3>
+                                <p className="text-blue-100">Obtén insights valiosos sobre tu negocio financiero</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Register;

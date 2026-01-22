@@ -1,27 +1,31 @@
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Wallet, 
-  CalendarCheck, 
+import {
+  LayoutDashboard,
+  Users,
+  Wallet,
+  CalendarCheck,
   Settings,
   DollarSign
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Clientes', href: '/clientes', icon: Users },
   { name: 'Préstamos', href: '/prestamos', icon: Wallet },
   { name: 'Cobros del Día', href: '/cobros', icon: CalendarCheck },
   { name: 'Configuración', href: '/configuracion', icon: Settings },
 ];
 
-export const Sidebar = () => {
+interface SidebarProps {
+  className?: string;
+}
+
+export const Sidebar = ({ className }: SidebarProps) => {
   const location = useLocation();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-sidebar text-sidebar-foreground">
+    <aside className={cn("fixed left-0 top-0 z-40 h-screen w-64 bg-sidebar text-sidebar-foreground", className)}>
       <div className="flex h-full flex-col">
         {/* Logo */}
         <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
