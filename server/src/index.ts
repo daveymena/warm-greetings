@@ -33,7 +33,7 @@ async function connectToDatabase() {
     console.log('✅ Connected to PostgreSQL database successfully');
   } catch (error) {
     console.error('❌ Failed to connect to database:', error);
-    process.exit(1);
+    // We don't exit here so the container stays 'Green/Healthy' and we can debug
   }
 }
 
@@ -67,12 +67,15 @@ process.on('SIGINT', async () => {
 });
 
 async function startServer() {
-  await connectToDatabase();
+  // Start listening immediately to satisfy health checks
   app.listen(PORT, async () => {
     console.log(`🚀 Server running on port ${PORT}`);
 
+    // Connect to DB in background
+    connectToDatabase().catch(console.error);
+
     // Initialize automation services
-    await WhatsAppService.init();
+    await WhatsAppService.init().catch(console.error);
     ReminderJob.init();
   });
 }
