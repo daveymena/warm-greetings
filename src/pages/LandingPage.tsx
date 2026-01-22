@@ -64,10 +64,10 @@ const LandingPage = () => {
       <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-primary">
-              <DollarSign className="h-6 w-6 text-white" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white p-1.5 shadow-md border border-primary/10">
+              <img src="/logo.png" alt="Rapi-Credi" className="h-full w-full object-contain" />
             </div>
-            <span className="text-xl font-bold text-primary">Rapi-Credi</span>
+            <span className="text-xl font-bold text-primary tracking-tight">Rapi-Credi</span>
           </div>
           <div className="flex items-center gap-4">
             <Link to="/login">
@@ -299,10 +299,10 @@ const LandingPage = () => {
           <div className="grid gap-8 md:grid-cols-4">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-primary">
-                  <DollarSign className="h-6 w-6 text-white" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white p-1.5 shadow-md border border-primary/10">
+                  <img src="/logo.png" alt="Rapi-Credi" className="h-full w-full object-contain" />
                 </div>
-                <span className="text-xl font-bold">Rapi-Credi</span>
+                <span className="text-xl font-bold tracking-tight">Rapi-Credi</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 La plataforma profesional para gestionar tu negocio de préstamos

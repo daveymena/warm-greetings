@@ -22,7 +22,7 @@ const Login = () => {
 
         try {
             const data = await authApi.login({ email, password });
-            
+
             login(data.token, data.user);
             toast.success(data.message || `Bienvenido de nuevo, ${data.user.name}`);
             navigate('/dashboard');
@@ -40,8 +40,10 @@ const Login = () => {
                 <div className="max-w-md space-y-8">
                     <div>
                         <div className="flex items-center mb-6">
-                            <DollarSign className="h-10 w-10 mr-3" />
-                            <span className="text-3xl font-bold">RapiCrédito</span>
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white p-2 mr-3 shadow-lg">
+                                <img src="/logo.png" alt="Rapi-Credi" className="h-full w-full object-contain" />
+                            </div>
+                            <span className="text-3xl font-bold tracking-tight">Rapi-Credi</span>
                         </div>
                         <h2 className="text-4xl font-bold mb-4">
                             Bienvenido de vuelta
@@ -50,7 +52,7 @@ const Login = () => {
                             Accede a tu panel de control y gestiona tu negocio financiero de manera profesional.
                         </p>
                     </div>
-                    
+
                     <div className="space-y-6">
                         <div className="flex items-start space-x-4">
                             <div className="flex-shrink-0">
@@ -61,7 +63,7 @@ const Login = () => {
                                 <p className="text-blue-100">Visualiza todas tus métricas importantes de un vistazo</p>
                             </div>
                         </div>
-                        
+
                         <div className="flex items-start space-x-4">
                             <div className="flex-shrink-0">
                                 <Users className="h-6 w-6 text-green-400" />
@@ -71,7 +73,7 @@ const Login = () => {
                                 <p className="text-blue-100">Administra tu cartera de clientes de forma eficiente</p>
                             </div>
                         </div>
-                        
+
                         <div className="flex items-start space-x-4">
                             <div className="flex-shrink-0">
                                 <Shield className="h-6 w-6 text-green-400" />
@@ -95,8 +97,8 @@ const Login = () => {
                 <Card className="w-full max-w-md z-10 border-white/40 shadow-2xl bg-white/80 backdrop-blur-sm">
                     <CardHeader className="space-y-1 text-center">
                         <div className="flex justify-center mb-4 lg:hidden">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 shadow-lg shadow-blue-600/20">
-                                <DollarSign className="h-6 w-6 text-white" />
+                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white p-2 shadow-xl border border-gray-100">
+                                <img src="/logo.png" alt="Rapi-Credi" className="h-full w-full object-contain" />
                             </div>
                         </div>
                         <CardTitle className="text-3xl font-bold tracking-tight text-gray-900">
@@ -137,9 +139,9 @@ const Login = () => {
                                     className="bg-white/70 border-gray-200 focus:bg-white focus:border-blue-500"
                                 />
                             </div>
-                            <Button 
-                                type="submit" 
-                                className="w-full h-11 text-lg font-semibold bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20" 
+                            <Button
+                                type="submit"
+                                className="w-full h-11 text-lg font-semibold bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20"
                                 disabled={loading}
                             >
                                 {loading ? (

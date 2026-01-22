@@ -29,10 +29,10 @@ export const Sidebar = ({ className }: SidebarProps) => {
       <div className="flex h-full flex-col">
         {/* Logo */}
         <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-            <DollarSign className="h-5 w-5 text-primary-foreground" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white p-1">
+            <img src="/logo.png" alt="Rapi-Credi" className="h-full w-full object-contain" />
           </div>
-          <span className="text-xl font-bold">CrediControl</span>
+          <span className="text-xl font-bold tracking-tight">Rapi-Credi</span>
         </div>
 
         {/* Navigation */}
@@ -57,10 +57,9 @@ export const Sidebar = ({ className }: SidebarProps) => {
           })}
         </nav>
 
-        {/* Footer */}
         <div className="border-t border-sidebar-border p-4">
           <p className="text-xs text-sidebar-foreground/50">
-            © 2024 CrediControl
+            © 2024 Rapi-Credi
           </p>
         </div>
       </div>
