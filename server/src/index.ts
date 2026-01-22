@@ -8,6 +8,7 @@ import loanRoutes from './routes/loans';
 import userRoutes from './routes/users';
 import profileRoutes from './routes/profile';
 import automationRoutes from './routes/automation';
+import clientRoutes from './routes/clients';
 import { WhatsAppService } from './services/whatsappService';
 import { ReminderJob } from './services/reminderJob';
 
@@ -42,6 +43,7 @@ app.use('/api/loans', loanRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/automation', automationRoutes);
+app.use('/api/clients', clientRoutes);
 
 app.get('/health', async (req, res) => {
   try {

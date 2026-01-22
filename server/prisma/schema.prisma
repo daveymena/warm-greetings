@@ -65,9 +65,12 @@ model Loan {
   id             String      @id
   amount         Float
   interestRate   Float
+  interestType   String      @default("TOTAL") // TOTAL, MONTHLY, QUINCENAL
+  frequency      String      @default("MENSUAL") // DIARIO, SEMANAL, QUINCENAL, MENSUAL
   term           Int
-  paymentDay     Int
-  monthlyPayment Float
+  paymentDay     Int?        // For monthly
+  paymentWeekday String?     // For weekly (Lunes, Martes...)
+  monthlyPayment Float       // Should probably be renamed to 'installmentAmount' but keeping for compat
   totalAmount    Float
   purpose        String?
   status         String      @default("PENDING")

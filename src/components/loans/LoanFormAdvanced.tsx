@@ -39,12 +39,15 @@ interface LoanFormData {
   // Loan info
   amount: number;
   interestRate: number;
+  interestType: 'TOTAL' | 'MENSUAL'; // TOTAL (flat rate on capital), MENSUAL (monthly rate)
+  frequency: 'DIARIO' | 'SEMANAL' | 'QUINCENAL' | 'MENSUAL';
   term: number;
   paymentDay: number;
+  paymentWeekday: string;
   purpose: string;
 
   // Calculated fields
-  monthlyPayment: number;
+  installmentAmount: number;
   totalAmount: number;
 }
 
@@ -65,11 +68,14 @@ export function LoanFormAdvanced({ onSubmit, loading = false }: LoanFormAdvanced
     clientOccupation: '',
     clientIncome: 0,
     amount: 0,
-    interestRate: 15,
-    term: 12,
+    interestRate: 20,
+    interestType: 'TOTAL',
+    frequency: 'MENSUAL',
+    term: 1,
     paymentDay: 15,
+    paymentWeekday: 'Lunes',
     purpose: '',
-    monthlyPayment: 0,
+    installmentAmount: 0,
     totalAmount: 0
   });
 
@@ -77,21 +83,41 @@ export function LoanFormAdvanced({ onSubmit, loading = false }: LoanFormAdvanced
   const [isExistingClient, setIsExistingClient] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState<string>('');
 
-  // Calculate loan details when amount, rate, or term changes
+  // Calculate loan details when amount, rate, frequency or term changes
   useEffect(() => {
     if (formData.amount > 0 && formData.interestRate > 0 && formData.term > 0) {
-      const monthlyRate = formData.interestRate / 100 / 12;
-      const monthlyPayment = formData.amount * (monthlyRate * Math.pow(1 + monthlyRate, formData.term)) /
-        (Math.pow(1 + monthlyRate, formData.term) - 1);
-      const totalAmount = monthlyPayment * formData.term;
+      let totalInterest = 0;
+
+      if (formData.interestType === 'TOTAL') {
+        // Flat interest on total amount
+        totalInterest = (formData.amount * formData.interestRate) / 100;
+      } else {
+        // Interest per period (assuming simple interest for gota a gota)
+        totalInterest = (formData.amount * (formData.interestRate / 100) * formData.term);
+      }
+
+      const totalAmount = formData.amount + totalInterest;
+
+      // Calculate installments based on frequency
+      // In gota a gota, 'term' usually means number of payments if frequency is not monthly
+      let numberOfInstallments = formData.term;
+      if (formData.frequency === 'MENSUAL') {
+        numberOfInstallments = formData.term;
+      } else if (formData.frequency === 'DIARIO') {
+        numberOfInstallments = formData.term * 24; // Assuming 24 working days if term is months? 
+        // Better: let 'term' be exactly the number of installments for non-monthly
+      }
+
+      // Simplify: for gota a gota, the user usually inputs exactly the number of installments
+      const installmentAmount = totalAmount / formData.term;
 
       setFormData(prev => ({
         ...prev,
-        monthlyPayment: Math.round(monthlyPayment),
+        installmentAmount: Math.ceil(installmentAmount / 100) * 100, // Round to nearest 100
         totalAmount: Math.round(totalAmount)
       }));
     }
-  }, [formData.amount, formData.interestRate, formData.term]);
+  }, [formData.amount, formData.interestRate, formData.term, formData.frequency, formData.interestType]);
 
   const handleInputChange = (field: keyof LoanFormData, value: string | number) => {
     setFormData(prev => ({
@@ -378,13 +404,13 @@ export function LoanFormAdvanced({ onSubmit, loading = false }: LoanFormAdvanced
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="interestRate">Tasa de Interés (% anual) *</Label>
+              <Label htmlFor="interestRate">Interés (%) *</Label>
               <Input
                 id="interestRate"
                 type="number"
                 value={formData.interestRate}
                 onChange={(e) => handleInputChange('interestRate', Number(e.target.value))}
-                placeholder="15"
+                placeholder="20"
                 min="0"
                 max="100"
                 step="0.1"
@@ -393,18 +419,76 @@ export function LoanFormAdvanced({ onSubmit, loading = false }: LoanFormAdvanced
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="term">Plazo (meses) *</Label>
+              <Label>Tipo de Interés</Label>
+              <Select
+                value={formData.interestType}
+                onValueChange={(value) => handleInputChange('interestType', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="TOTAL">Total (Fijo)</SelectItem>
+                  <SelectItem value="MENSUAL">Mensual (% sobre capital)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label>Frecuencia de Pago</Label>
+              <Select
+                value={formData.frequency}
+                onValueChange={(value) => handleInputChange('frequency', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DIARIO">Diario</SelectItem>
+                  <SelectItem value="SEMANAL">Semanal</SelectItem>
+                  <SelectItem value="QUINCENAL">Quincenal</SelectItem>
+                  <SelectItem value="MENSUAL">Mensual</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="term">Número de Cuotas (Plazo) *</Label>
               <Input
                 id="term"
                 type="number"
                 value={formData.term}
                 onChange={(e) => handleInputChange('term', Number(e.target.value))}
-                placeholder="12"
+                placeholder="24"
                 min="1"
-                max="60"
                 required
               />
             </div>
+
+            {formData.frequency === 'SEMANAL' && (
+              <div className="space-y-2">
+                <Label>Día de Cobro</Label>
+                <Select
+                  value={formData.paymentWeekday}
+                  onValueChange={(value) => handleInputChange('paymentWeekday', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Lunes">Lunes</SelectItem>
+                    <SelectItem value="Martes">Martes</SelectItem>
+                    <SelectItem value="Miercoles">Miércoles</SelectItem>
+                    <SelectItem value="Jueves">Jueves</SelectItem>
+                    <SelectItem value="Viernes">Viernes</SelectItem>
+                    <SelectItem value="Sabado">Sábado</SelectItem>
+                    <SelectItem value="Domingo">Domingo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -427,42 +511,44 @@ export function LoanFormAdvanced({ onSubmit, loading = false }: LoanFormAdvanced
       />
 
       {/* Loan Summary */}
-      {formData.amount > 0 && formData.monthlyPayment > 0 && (
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
+      {formData.amount > 0 && formData.installmentAmount > 0 && (
+        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-primary/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Calculator className="h-5 w-5" />
-              Resumen del Préstamo
+              <Calculator className="h-5 w-5 text-primary" />
+              Resumen del Préstamo (Gota a Gota)
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-white rounded-lg shadow-sm dark:bg-gray-800">
-                <p className="text-sm text-muted-foreground">Cuota Mensual</p>
+              <div className="text-center p-4 bg-white rounded-lg shadow-sm dark:bg-gray-800 border border-blue-100">
+                <p className="text-sm text-muted-foreground">Cuota {formData.frequency.toLowerCase()}</p>
                 <p className="text-2xl font-bold text-blue-600">
-                  {formatCurrency(formData.monthlyPayment)}
+                  {formatCurrency(formData.installmentAmount)}
                 </p>
               </div>
 
-              <div className="text-center p-4 bg-white rounded-lg shadow-sm dark:bg-gray-800">
-                <p className="text-sm text-muted-foreground">Total a Pagar</p>
+              <div className="text-center p-4 bg-white rounded-lg shadow-sm dark:bg-gray-800 border border-green-100">
+                <p className="text-sm text-muted-foreground">Total a Recoger</p>
                 <p className="text-2xl font-bold text-green-600">
                   {formatCurrency(formData.totalAmount)}
                 </p>
               </div>
 
-              <div className="text-center p-4 bg-white rounded-lg shadow-sm dark:bg-gray-800">
-                <p className="text-sm text-muted-foreground">Intereses</p>
+              <div className="text-center p-4 bg-white rounded-lg shadow-sm dark:bg-gray-800 border border-orange-100">
+                <p className="text-sm text-muted-foreground">Ganancia (Intereses)</p>
                 <p className="text-2xl font-bold text-orange-600">
                   {formatCurrency(formData.totalAmount - formData.amount)}
                 </p>
               </div>
             </div>
 
-            <div className="mt-4 p-3 bg-blue-100 rounded-lg dark:bg-blue-900/30">
-              <p className="text-sm text-blue-700 dark:text-blue-300">
-                <Calendar className="inline h-4 w-4 mr-1" />
-                <strong>Fecha de pago:</strong> Día {formData.paymentDay} de cada mes
+            <div className="mt-4 p-3 bg-blue-100/50 rounded-lg dark:bg-blue-900/30 border border-blue-200">
+              <p className="text-sm text-blue-800 dark:text-blue-300">
+                <Calendar className="inline h-4 w-4 mr-1 text-blue-600" />
+                <strong>Plan de Pagos:</strong> {formData.term} cuotas {formData.frequency.toLowerCase()}s de {formatCurrency(formData.installmentAmount)}.
+                {formData.frequency === 'MENSUAL' && ` Cobro los días ${formData.paymentDay}.`}
+                {formData.frequency === 'SEMANAL' && ` Cobro cada ${formData.paymentWeekday}.`}
               </p>
             </div>
           </CardContent>

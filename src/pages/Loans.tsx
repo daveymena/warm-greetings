@@ -23,6 +23,7 @@ import { useQuery } from '@tanstack/react-query';
 import { loansApi } from '@/lib/api';
 
 interface LoanFormData {
+  clientId?: string;
   clientName: string;
   clientPhone: string;
   clientEmail: string;
@@ -33,10 +34,13 @@ interface LoanFormData {
   clientIncome: number;
   amount: number;
   interestRate: number;
+  interestType: 'TOTAL' | 'MENSUAL';
+  frequency: 'DIARIO' | 'SEMANAL' | 'QUINCENAL' | 'MENSUAL';
   term: number;
   paymentDay: number;
+  paymentWeekday: string;
   purpose: string;
-  monthlyPayment: number;
+  installmentAmount: number;
   totalAmount: number;
 }
 
@@ -57,15 +61,44 @@ const Loans = () => {
   const handleSubmit = async (data: LoanFormData) => {
     setLoading(true);
     try {
-      // Aquí se enviarían los datos al backend
-      // Por ahora simulamos la creación
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      let finalClientId = data.clientId;
+
+      // If no clientId, we should probably create the client first
+      if (!finalClientId) {
+        // This is a simplification, ideally you'd have a clientsApi.create
+        const clientResp = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/clients`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            name: data.clientName,
+            phone: data.clientPhone,
+            email: data.clientEmail,
+            address: data.clientAddress,
+            idNumber: data.clientIdNumber,
+            idType: data.clientIdType,
+            occupation: data.clientOccupation,
+            income: data.clientIncome
+          })
+        });
+
+        if (!clientResp.ok) throw new Error('Error al crear el cliente');
+        const clientData = await clientResp.json();
+        finalClientId = clientData.id;
+      }
+
+      await loansApi.create({
+        ...data,
+        clientId: finalClientId
+      });
 
       toast.success('Préstamo creado correctamente');
       setShowForm(false);
       refetch();
-    } catch (error) {
-      toast.error('Error al crear el préstamo');
+    } catch (error: any) {
+      toast.error(error.message || 'Error al crear el préstamo');
     } finally {
       setLoading(false);
     }
@@ -120,26 +153,28 @@ const Loans = () => {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Monto</span>
+          <span className="text-sm text-muted-foreground">Monto Prestado</span>
           <span className="font-semibold text-lg text-blue-600">
             {formatCurrency(loan.amount)}
           </span>
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Tasa de Interés</span>
-          <span className="font-medium">{loan.interestRate}% anual</span>
+          <span className="text-sm text-muted-foreground">Cuota {loan.frequency?.toLowerCase() || 'mensual'}</span>
+          <span className="font-bold text-green-600">
+            {formatCurrency(loan.monthlyPayment)}
+          </span>
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Plazo</span>
-          <span className="font-medium">{loan.term} meses</span>
+          <span className="text-sm text-muted-foreground">Plan</span>
+          <span className="font-medium">{loan.term} cuotas</span>
         </div>
 
         <div className="pt-2 border-t">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <User className="h-4 w-4" />
-            <span>Cliente: {loan.client?.name || `Usuario #${loan.clientId?.slice(-4) || 'N/A'}`}</span>
+            <span className="truncate">Cliente: {loan.client?.name || loan.Client?.name || 'N/A'}</span>
           </div>
         </div>
       </CardContent>

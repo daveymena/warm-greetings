@@ -88,7 +88,8 @@ export class ReminderJob {
                     client.name,
                     payment.amount,
                     tomorrow.toLocaleDateString(),
-                    user?.name || 'Rapi-Credi'
+                    user?.name || 'Rapi-Credi',
+                    (loan as any).frequency || 'MENSUAL'
                 );
 
                 // Send WhatsApp to Client
