@@ -1,0 +1,65 @@
+import { Link, useLocation } from 'react-router-dom';
+import { 
+  LayoutDashboard, 
+  Users, 
+  Wallet, 
+  CalendarCheck, 
+  Settings,
+  DollarSign
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+const navigation = [
+  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'Clientes', href: '/clientes', icon: Users },
+  { name: 'Préstamos', href: '/prestamos', icon: Wallet },
+  { name: 'Cobros del Día', href: '/cobros', icon: CalendarCheck },
+  { name: 'Configuración', href: '/configuracion', icon: Settings },
+];
+
+export const Sidebar = () => {
+  const location = useLocation();
+
+  return (
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-sidebar text-sidebar-foreground">
+      <div className="flex h-full flex-col">
+        {/* Logo */}
+        <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
+            <DollarSign className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <span className="text-xl font-bold">CrediControl</span>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 space-y-1 px-3 py-4">
+          {navigation.map((item) => {
+            const isActive = location.pathname === item.href;
+            return (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={cn(
+                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                  isActive
+                    ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                    : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                {item.name}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="border-t border-sidebar-border p-4">
+          <p className="text-xs text-sidebar-foreground/50">
+            © 2024 CrediControl
+          </p>
+        </div>
+      </div>
+    </aside>
+  );
+};
