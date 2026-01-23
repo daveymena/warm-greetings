@@ -19,7 +19,7 @@ router.get('/', authenticateToken, async (req: any, res) => {
 // Create a new client
 router.post('/', authenticateToken, async (req: any, res) => {
     try {
-        const { name, email, phone, address, idNumber, idType, occupation, income } = req.body;
+        const { name, email, phone, address, idNumber, idType, occupation, income, references } = req.body;
 
         // Check if client already exists
         const existingClient = await prisma.client.findUnique({
@@ -41,6 +41,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
                 idType: idType || 'CC',
                 occupation,
                 income: income ? parseFloat(income) : null,
+                references: references || null,
             }
         });
 

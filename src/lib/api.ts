@@ -42,7 +42,17 @@ export const receiptsApi = {
     getPaymentHistory: (loanId: string) => apiFetch(`/receipts/payment-history/${loanId}`),
 };
 
+
+export const clientsApi = {
+    getAll: () => apiFetch('/clients'),
+    create: (data: any) => apiFetch('/clients', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    }),
+};
+
 export const authApi = {
+
     login: (credentials: any) => apiFetch('/auth/login', {
         method: 'POST',
         body: JSON.stringify(credentials),
