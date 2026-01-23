@@ -26,7 +26,8 @@ export class WhatsAppService {
         this.status = 'CONNECTING';
 
         try {
-            const authDir = path.join(process.cwd(), 'wa_auth');
+            const sessionName = process.env.WA_SESSION_NAME || 'wa_auth';
+            const authDir = path.join(process.cwd(), sessionName);
             if (!fs.existsSync(authDir)) fs.mkdirSync(authDir, { recursive: true });
 
             const { state, saveCreds } = await useMultiFileAuthState(authDir);

@@ -36,6 +36,8 @@ build/
 server/last_qr.txt
 server/qr.png
 server/sessions/
+wa_auth/
+wa_*/
 server/.env
 *.temp
 verify-system.sh

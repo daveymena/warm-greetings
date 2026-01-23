@@ -15,11 +15,14 @@ Este servicio maneja la base de datos y la lógica.
 - **Ruta de Construcción (Build Path)**: `./server`
 - **Puerto**: `5000`
 - **Variables de Entorno**:
-  - `PORT`: `5000`
-  - `DATABASE_URL`: `postgresql://usuario:password@host:puerto/dbname`
-  - `JWT_SECRET`: `una-clave-muy-segura`
-  - `USE_LLM`: `true` (opcional para IA)
+  - `DATABASE_URL`: `postgresql://usuario:password@db-host:5432/rapi_credi?sslmode=require`
+  - `JWT_SECRET`: `rapi_credi_secret_key_2024`
+  - `USE_LLM`: `true`
+  - `OLLAMA_BASE_URL`: `https://ollama-ollama.ginee6.easypanel.host`
+  - `OLLAMA_MODEL`: `llama3.2:1b`
+  - `WA_SESSION_NAME`: `rapi-credi-production`
   - `NODE_ENV`: `production`
+  - `PORT`: `5000`
 
 > **Nota**: El backend ejecutará automáticamente `npx prisma generate` y la inicialización de la base de datos al iniciar.
 
@@ -33,19 +36,14 @@ Muestra la interfaz de usuario.
 - **Ruta de Construcción (Build Path)**: `.` (Raíz del proyecto)
 - **Puerto**: `80`
 - **Variables de Entorno**:
-  - `VITE_API_URL`: `/api` (Esto permite que Nginx haga el proxy interno).
-
-### ¿Cómo se comunican?
-El frontend usa un archivo `nginx.conf` que redirige todas las llamadas a `/api/*` hacia `http://backend:5000/api/*`. Por eso es vital que el backend se llame exactamente `backend`.
+  - `VITE_API_URL`: `/api`
 
 ---
 
 ## Solución de Problemas
 
-### Pantalla en blanco o Error 502
-1. **Nombre del servicio**: Confirma que el backend se llama `backend`.
-2. **Logs del Frontend**: Si ves un error de "host not found", el frontend no está encontrando al backend en la red interna de Docker.
-3. **Logs del Backend**: Si el backend falla, revisa que la `DATABASE_URL` sea correcta y accesible.
+### Error: host not found in upstream "backend"
+He actualizado la configuración de Nginx para manejar esto. Si sucede, asegúrate de que el backend esté encendido. Si el nombre del servicio no es `backend`, cámbialo en la configuración del servicio en Easypanel.
 
-### Base de Datos
-El sistema está diseñado para conectarse a **PostgreSQL**. Asegúrate de tener una base de datos lista antes de desplegar el backend.
+### Conexión a Base de Datos
+Asegúrate de que la `DATABASE_URL` sea accesible desde el servidor donde corre Easypanel. Si usas una base de datos interna de Easypanel, usa el nombre del servicio (ej: `postgres:5432`).
