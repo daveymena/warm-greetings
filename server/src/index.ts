@@ -6,10 +6,7 @@ import { PrismaClient } from '@prisma/client';
 import authRoutes from './routes/auth';
 import loanRoutes from './routes/loans';
 import clientRoutes from './routes/clients';
-import paymentRoutes from './routes/payments';
-import dashboardRoutes from './routes/dashboard';
 import receiptRoutes from './routes/receipts';
-import whatsappRoutes from './routes/whatsapp';
 import automationRoutes from './routes/automation';
 import { WhatsAppService } from './services/whatsappService';
 
@@ -27,10 +24,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/loans', loanRoutes);
 app.use('/api/clients', clientRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/receipts', receiptRoutes);
-app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/automation', automationRoutes);
 
 // Health check
